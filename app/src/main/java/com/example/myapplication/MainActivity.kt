@@ -4,15 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,10 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import kotlin.uuid.Uuid.Companion.random
+import java.text.NumberFormat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +34,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    DiceWithButtonAndImage(
-                        modifier = Modifier.padding(innerPadding)
+                    TipTimeLayout(
+                        modifier = Modifier.padding(innerPadding)  // ✅ innerPadding kullanıldı
                     )
                 }
             }
@@ -41,35 +43,56 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
-    var diceNumber by remember{ mutableStateOf(1) }
-    var imageResourceId = when(diceNumber){
-        1-> R.drawable.dice_1
-            2-> R.drawable.dice_2
-            3-> R.drawable.dice_3
-            4-> R.drawable.dice_4
-            5-> R.drawable.dice_5
-            else -> R.drawable.dice_1
-    }
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+@Composable  // ✅ @ yerine @Composable düzeltildi
+fun TipTimeLayout(modifier: Modifier = Modifier) {  // ✅ modifier parametresi eklendi
+    var amountInput by remember { mutableStateOf("") }
+    val amount = amountInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount)
 
+    Column(
+        modifier = modifier  // ✅ modifier kullanıldı
+            .fillMaxSize()
+            .padding(horizontal = 40.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Text(
+            text = stringResource(R.string.calculate_tip),
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-            ) {
-            Image(painter = painterResource(imageResourceId), contentDescription = imageResourceId.toString())
-            Button(onClick = {
-                diceNumber = (1..6).random()
-            },
-                content = {
-                    Text(text = "Roll", fontSize = 24.sp,)
-            })
-        }
+        EditNumberField(
+            value = amountInput,
+            onValueChange = { amountInput = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+        )
+
+        Text(
+            text = stringResource(R.string.tip_amount, tip),
+            style = MaterialTheme.typography.displaySmall
+        )
     }
+}
+
+@Composable
+fun EditNumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(stringResource(R.string.calculate_tip)) },  // ✅ doğru string resource
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = modifier
+    )
+}
+
+private fun calculateTip(amount: Double, tipPercent: Double = 15.0): String {
+    val tip = tipPercent / 100 * amount
+    return NumberFormat.getCurrencyInstance().format(tip)
 }
