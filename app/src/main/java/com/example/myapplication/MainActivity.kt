@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     TipTimeLayout(
-                        modifier = Modifier.padding(innerPadding)  // ✅ innerPadding kullanıldı
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
@@ -43,14 +43,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable  // ✅ @ yerine @Composable düzeltildi
-fun TipTimeLayout(modifier: Modifier = Modifier) {  // ✅ modifier parametresi eklendi
+@Composable
+fun TipTimeLayout(modifier: Modifier = Modifier) {
     var amountInput by remember { mutableStateOf("") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
     val tip = calculateTip(amount)
 
     Column(
-        modifier = modifier  // ✅ modifier kullanıldı
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 40.dp),
         verticalArrangement = Arrangement.Center,
@@ -85,7 +85,7 @@ fun EditNumberField(
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(stringResource(R.string.calculate_tip)) },  // ✅ doğru string resource
+        label = { Text(stringResource(R.string.calculate_tip)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier
