@@ -44,7 +44,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.core.content.ContextCompat
+
 import com.homework6.data.DataSource
 import com.homework6.model.Dessert
 import androidx.compose.ui.unit.dp
@@ -63,6 +63,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.homework6.ui.theme.HomeWork6Theme
 import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
+
 private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
